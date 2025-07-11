@@ -1,1 +1,1 @@
-# Vesting Frontend
+# Интерфейс вестинга

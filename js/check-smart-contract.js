@@ -53,14 +53,14 @@ const NO_RESPONSE = 'NO_RESPONSE';
 const checkPool = async (tonweb, poolAddress) => {
     const data = await tonweb.provider.call2(poolAddress, 'get_pool_data');
 
-    const poolContract = new PoolContract(null, {data: data});
+    const poolContract = new PoolContract(null, { data: data });
     /** @type {string} */
     const address = (await poolContract.getAddress()).toString(false);
 
     if (poolAddress !== address) {
         return {
             status: INVALID,
-            text: 'ADDING NOMINATOR-POOL TO THE WHITELIST IS PROHIBITED! INVALID NOMINATOR POOL: Invalid init state of contract'
+            text: 'ДОБАВЛЕНИЕ ПУЛА НОМИНАТОРОВ В БЕЛЫЙ СПИСОК ЗАПРЕЩЕНО! НЕДОПУСТИМЫЙ ПУЛ НОМИНАТОРОВ: Недопустимое начальное состояние контракта'
         };
     }
 
@@ -75,7 +75,7 @@ const checkPool = async (tonweb, poolAddress) => {
 
     return {
         status: SUCCESS,
-        text: `ADDING NOMINATOR-POOL TO THE WHITELIST IS PROHIBITED! Nominator Pool: ${rewardShare / 100}% validator reward, ${maxNominatorsCount} max nominators, ${TonWeb.utils.fromNano(minValidatorStake)} TON min validator stake, ${TonWeb.utils.fromNano(minNominatorStake)} TON min nominator stake.`
+        text: `ДОБАВЛЕНИЕ ПУЛА НОМИНАТОРОВ В БЕЛЫЙ СПИСОК ЗАПРЕЩЕНО! Пул номинаторов: ${rewardShare / 100}% вознаграждения за проверку, ${maxNominatorsCount} максимальное количество номинаторов, ${TonWeb.utils.fromNano(minValidatorStake)} TON минимальной ставки для валидатора, ${TonWeb.utils.fromNano(minNominatorStake)} TON минимальной ставки для номинатора.`
     }
 }
 
@@ -95,7 +95,7 @@ const checkSingleNominator = async (tonweb, poolAddress, version) => {
 
     return {
         status: SUCCESS,
-        text: 'Single nominator ' + version + ', owner is ' + ownerAddress.toString(true, true, true) + ' (MUST BE EQUAL VESTING-WALLET ADDRESS), validator is ' + validatorAddress.toString(true, true, true)
+        text: 'Единый номинатор ' + version + ', адрес владельца ' + ownerAddress.toString(true, true, true) + ' (ДОЛЖЕН СОВПАДАТЬ С АДРЕСОМ КОШЕЛЬКА НА ВЕСТИНГ), валидатор ' + validatorAddress.toString(true, true, true)
     };
 }
 
@@ -124,14 +124,14 @@ const checkSmartContract = async (tonweb, address) => {
         if (addressString === '-1:3333333333333333333333333333333333333333333333333333333333333333') {
             return {
                 status: SUCCESS,
-                text: 'Elector. Note that vesting-wallet NEED TO BE in masterchain.'
+                text: 'Избиратель. Обратите внимание, что кошелек на вестинг ДОЛЖЕН БЫТЬ в мастерчейне.'
             }
         }
 
         if (addressString === '-1:5555555555555555555555555555555555555555555555555555555555555555') {
             return {
                 status: SUCCESS,
-                text: 'Config. No need to add it to the whitelist.'
+                text: 'Конфигурация. Нет необходимости добавлять его в белый список.'
             }
         }
 
@@ -139,13 +139,13 @@ const checkSmartContract = async (tonweb, address) => {
         if (info.state === 'uninitialized') {
             return {
                 status: SUCCESS,
-                text: 'Uninitialized account. There is no way to know his type.'
+                text: 'Неинициализированный аккаунт. Нет возможности узнать его тип.'
             }
         }
         if (info.state === 'frozen') {
             return {
                 status: INVALID,
-                text: 'Frozen account! UNFREEZE IT BEFORE ADDING TO THE WHITELIST'
+                text: 'Замороженный аккаунт! РАЗМОРОЗЬТЕ ЕГО ПЕРЕД ДОБАВЛЕНИЕМ В БЕЛЫЙ СПИСОК'
             }
         }
 
@@ -165,17 +165,17 @@ const checkSmartContract = async (tonweb, address) => {
 
         } else if (await codeEquals(info.code, SINGLE_NOMINATOR_1_0_CODE_HASH)) {
 
-           return checkSingleNominator(tonweb, addressString, '1.0');
+            return checkSingleNominator(tonweb, addressString, '1.0');
 
         } else if (await codeEquals(info.code, SINGLE_NOMINATOR_1_1_CODE_HASH)) {
 
-           return checkSingleNominator(tonweb, addressString, '1.1');
+            return checkSingleNominator(tonweb, addressString, '1.1');
 
         } else {
             const walletInfo = await tonweb.provider.getWalletInfo(addressString);
             return {
                 status: SUCCESS,
-                text: walletInfo.wallet === true ? walletInfo.wallet_type : 'Unknown account - not wallet, not nominator pool'
+                text: walletInfo.wallet === true ? walletInfo.wallet_type : 'Неизвестный аккаунт - не кошелек и не пул номинаторов'
             };
 
             // todo: whales pools addresses
@@ -188,7 +188,7 @@ const checkSmartContract = async (tonweb, address) => {
     } catch (e) {
         return {
             status: NO_RESPONSE,
-            text: `Gotta try again. Can't get account info: ` + e.message
+            text: `Нужно попробовать еще раз. Не удается получить информацию об учетной записи: ` + e.message
         }
     }
 }
